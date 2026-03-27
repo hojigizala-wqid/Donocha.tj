@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donocha.tj — AI Platform</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0b1020;
+      --bg2:#0f172a;
+      --panel:#111827;
+      --line:rgba(255,255,255,0.08);
+      --text:#fff;
+      --muted:#9ca3af;
+      --blue:#22c1ff;
+      --blue2:#4f46e5;
+      --orange:#ff7a18;
+      --green:#10b981;
+    }
+    body{
+      font-family:Arial,Helvetica,sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(34,193,255,.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(79,70,229,.14), transparent 25%),
+        radial-gradient(circle at bottom center, rgba(255,122,24,.08), transparent 25%),
+        linear-gradient(135deg, var(--bg), var(--bg2));
+      color:var(--text);
+      min-block-size:100vh;
+      overflow-x:hidden;
+    }
+    .animated-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+    .orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.22;animation:float 12s infinite ease-in-out}
+    .orb1{inline-size:280px;block-size:280px;background:#22c1ff;inset-block-start:8%;inset-inline-start:5%}
+    .orb2{inline-size:320px;block-size:320px;background:#4f46e5;inset-block-start:10%;inset-inline-end:6%;animation-delay:2s}
+    .orb3{inline-size:260px;block-size:260px;background:#ff7a18;inset-block-end:8%;inset-inline-start:38%;animation-delay:4s}
+    @keyframes float{
+      0%,100%{transform:translateY(0) translateX(0) scale(1)}
+      50%{transform:translateY(-25px) translateX(18px) scale(1.06)}
+    }
+
+    .app{position:relative;z-index:1;display:grid;grid-template-columns:280px 1fr;min-block-size:100vh}
+    .sidebar{
+      background:rgba(6,10,22,.88);
+      border-inline-end:1px solid var(--line);
+      backdrop-filter:blur(16px);
+      padding:20px 16px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:16px;
+      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)
+    }
+    .brand img{inline-size:42px;block-size:42px;object-fit:contain}
+    .brand-text h2{font-size:20px}
+    .brand-text p{color:var(--muted);font-size:12px;margin-block-start:3px}
+    .new-chat{
+      border:none;padding:14px 16px;border-radius:14px;
+      background:linear-gradient(90deg,var(--blue),var(--blue2));
+      color:#fff;font-size:15px;font-weight:700;cursor:pointer
+    }
+    .menu{display:flex;flex-direction:column;gap:10px}
+    .menu-item{
+      padding:14px;border-radius:14px;background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.05);color:#dbeafe
+    }
+    .sidebar-footer{
+      margin-block-start:auto;padding:14px;border-radius:16px;
+      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+      color:var(--muted);font-size:13px;line-height:1.5
+    }
+    .main{display:flex;flex-direction:column;min-block-size:100vh}
+    .topbar{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:18px 28px;border-block-end:1px solid var(--line);
+      background:rgba(11,16,32,.55);backdrop-filter:blur(12px)
+    }
+    .topbar-left{display:flex;align-items:center;gap:12px}
+    .topbar-left img{inline-size:34px;block-size:34px;object-fit:contain}
+    .status{display:flex;align-items:center;gap:8px;color:#c7d2fe;font-size:14px}
+    .dot{inline-size:10px;block-size:10px;border-radius:50%;background:var(--green);box-shadow:0 0 12px rgba(16,185,129,.8)}
+    .hero{max-inline-size:960px;margin:0 auto;inline-size:100%;padding:42px 24px 18px;text-align:center}
+    .hero-logo{
+      inline-size:120px;block-size:120px;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;
+      border-radius:28px;background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);animation:pulse 4s infinite ease-in-out
+    }
+    .hero-logo img{inline-size:85px;block-size:85px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(34,193,255,.45))}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+    .hero h2{
+      font-size:48px;line-height:1.1;margin-block-end:14px;
+      background:linear-gradient(90deg,#fff,#9be7ff,#ffd1a8);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+    }
+    .hero p{max-inline-size:760px;margin:0 auto;color:#cbd5e1;font-size:17px;line-height:1.7}
+    .hero-badges{margin-block-start:22px;display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+    .badge{
+      padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);color:#dbeafe;font-size:13px
+    }
+    .chat-shell{max-inline-size:960px;margin:18px auto 30px;inline-size:100%;padding:0 24px 24px;flex:1;display:flex;flex-direction:column}
+    .chat-box{
+      flex:1;min-block-size:420px;background:rgba(8,13,27,.72);
+      border:1px solid rgba(255,255,255,.08);border-radius:28px;
+      display:flex;flex-direction:column;overflow:hidden;backdrop-filter:blur(12px)
+    }
+    .messages{flex:1;padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+    .message{
+      max-inline-size:82%;padding:16px 18px;border-radius:18px;line-height:1.6;
+      white-space:pre-wrap;word-wrap:break-word;animation:fadeIn .25s ease
+    }
+    .user{align-self:flex-end;background:linear-gradient(135deg, rgba(34,193,255,.18), rgba(79,70,229,.18));border:1px solid rgba(34,193,255,.22)}
+    .ai{align-self:flex-start;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .typing{display:inline-flex;gap:6px;align-items:center}
+    .typing span{inline-size:8px;block-size:8px;border-radius:50%;background:#9bdfff;animation:bounce 1.2s infinite ease-in-out}
+    .typing span:nth-child(2){animation-delay:.15s}
+    .typing span:nth-child(3){animation-delay:.3s}
+    @keyframes bounce{0%,80%,100%{transform:scale(.7);opacity:.45}40%{transform:scale(1);opacity:1}}
+    .input-area{border-block-start:1px solid rgba(255,255,255,.08);padding:18px;background:rgba(255,255,255,.02)}
+    .input-wrap{
+      display:flex;align-items:flex-end;gap:12px;background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:12px
+    }
+    textarea{
+      flex:1;resize:none;min-block-size:56px;max-block-size:180px;border:none;outline:none;
+      background:transparent;color:#fff;font-size:15px;line-height:1.5;
+      font-family:Arial,Helvetica,sans-serif;padding:6px 8px
+    }
+    textarea::placeholder{color:#94a3b8}
+    .send-btn{
+      border:none;min-inline-size:120px;block-size:52px;border-radius:16px;
+      background:linear-gradient(90deg,var(--blue),var(--blue2));
+      color:#fff;font-weight:700;cursor:pointer
+    }
+    .hint{margin-block-start:10px;color:#94a3b8;font-size:12px;padding-inline-start:6px}
+
+    @media (max-inline-size:980px){
+      .app{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .hero h2{font-size:34px}
+      .message{max-inline-size:92%}
+    }
+    @media (max-inline-size:640px){
+      .hero{padding:28px 16px 16px}
+      .chat-shell{padding:0 16px 20px}
+      .hero h2{font-size:28px}
+      .input-wrap{flex-direction:column;align-items:stretch}
+      .send-btn{inline-size:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="animated-bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="logo.png" alt="Donocha Logo">
+        <div class="brand-text">
+          <h2>Donocha.tj</h2>
+          <p>AI Platform</p>
+        </div>
+      </div>
+
+      <button class="new-chat" onclick="newChat()">+ Новый чат</button>
+
+      <div class="menu">
+        <div class="menu-item">💬 AI Chat</div>
+        <div class="menu-item">🧠 AI Assistant</div>
+        <div class="menu-item">🌍 Все языки</div>
+        <div class="menu-item">⚡ API Ready</div>
+        <div class="menu-item">📚 Knowledge Mode</div>
+        <div class="menu-item">🖼 AI Image Tools</div>
+      </div>
+
+      <div class="sidebar-footer">
+        Donocha.tj — умная мультиязычная AI-платформа.
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <img src="logo.png" alt="Donocha Logo">
+          <h1>Donocha.tj</h1>
+        </div>
+        <div class="status">
+          <span class="dot"></span>
+          <span>AI online</span>
+        </div>
+      </div>
+
+      <section class="hero">
+        <div class="hero-logo">
+          <img src="logo.png" alt="Donocha Logo">
+        </div>
+
+        <h2>AI-платформа нового поколения</h2>
+        <p>
+          Donocha.tj — умная AI-платформа в стиле ChatGPT.
+          Понимает таджикский, русский, английский и другие языки.
+        </p>
+
+        <div class="hero-badges">
+          <span class="badge">Мультиязычность</span>
+          <span class="badge">AI Chat</span>
+          <span class="badge">API Ready</span>
+          <span class="badge">Animation</span>
+        </div>
+      </section>
+
+      <section class="chat-shell">
+        <div class="chat-box">
+          <div class="messages" id="messages">
+            <div class="message ai">Привет. Я Donocha AI. Напиши вопрос.</div>
+          </div>
+
+          <div class="input-area">
+            <div class="input-wrap">
+              <textarea id="input" placeholder="Напиши вопрос..." onkeydown="handleKey(event)"></textarea>
+              <button class="send-btn" id="sendBtn" onclick="sendMessage()">Отправить</button>
+            </div>
+            <div class="hint">Enter — отправить, Shift + Enter — новая строка</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const messages = document.getElementById("messages");
+    const input = document.getElementById("input");
+    const sendBtn = document.getElementById("sendBtn");
+
+    function addMessage(text, type){
+      const div = document.createElement("div");
+      div.className = "message " + type;
+      div.textContent = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function addTyping(){
+      const div = document.createElement("div");
+      div.className = "message ai";
+      div.id = "typingMessage";
+      div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function removeTyping(){
+      const el = document.getElementById("typingMessage");
+      if (el) el.remove();
+    }
+
+    function handleKey(e){
+      if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function newChat(){
+      messages.innerHTML = '<div class="message ai">Новый чат создан. Напиши свой вопрос.</div>';
+      input.value = "";
+      input.focus();
+    }
+
+    async function sendMessage(){
+      const text = input.value.trim();
+      if(!text) return;
+
+      addMessage(text, "user");
+      input.value = "";
+      sendBtn.disabled = true;
+      addTyping();
+
+      try{
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text })
+        });
+
+        const data = await response.json();
+        removeTyping();
+
+        if(data.reply){
+          addMessage(data.reply, "ai");
+        } else {
+          addMessage("Ошибка: AI не вернул ответ.", "ai");
+        }
+      } catch (err){
+        removeTyping();
+        addMessage("Ошибка подключения к серверу.", "ai");
+      } finally {
+        sendBtn.disabled = false;
+        input.focus();
+      }
+    }
+  </script>
+</body>
+</html>
